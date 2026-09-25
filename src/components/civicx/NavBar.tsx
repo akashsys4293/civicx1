@@ -1,157 +1,150 @@
-import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
-import { Menu, X } from "lucide-react";
+
+
+import { useState } from "react";
+import { Menu, X, ChevronDown } from "lucide-react";
 import { Link } from "@tanstack/react-router";
-import { cn } from "@/lib/utils";
 import { BrandLogo } from "./BrandLogo";
 import { LanguageToggle } from "./LanguageToggle";
 
 const links = [
-  { label: "Explore Challenges", href: "#live-world" },
-  { label: "How It Works", href: "#how-it-works" },
-  { label: "Impact", href: "#impact" },
-  { label: "For Universities", href: "#forces" },
-  { label: "For Industry", href: "#missions" },
+  { label: "Home", href: "#top" },
+  { label: "Citizen Services", href: "#services" },
+  { label: "Civic Map", href: "#live-world" },
+  { label: "Missions", href: "#missions" },
+  { label: "Updates", href: "#updates" },
 ];
 
 export function NavBar() {
-  const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
-  const [activeId, setActiveId] = useState<string>("#top");
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  // highlight the nav item for the section currently in view
-  useEffect(() => {
-    const ids = ["top", "live-world", "impact", "how-it-works", "forces", "missions"];
-    const sections = ids
-      .map((id) => document.getElementById(id))
-      .filter((el): el is HTMLElement => el !== null);
-    if (!sections.length) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        if (visible) setActiveId(`#${visible.target.id}`);
-      },
-      { rootMargin: "-45% 0px -45% 0px", threshold: [0, 0.25, 0.6, 1] },
-    );
-    sections.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, []);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-5 sm:pt-4">
-      <motion.nav
-        initial={{ opacity: 0, y: -18 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className={cn(
-          "mx-auto grid max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-4 rounded-2xl px-4 transition-all duration-500 lg:px-6",
-          scrolled || open
-            ? "glass py-2 shadow-[0_10px_40px_-18px_color-mix(in_oklab,var(--neon-cyan)_35%,transparent)]"
-            : "border border-transparent bg-transparent py-4 backdrop-blur-[2px]",
-          open && "bg-background/95",
-        )}
-      >
-        <a href="#top" aria-label="CivicX home" className="flex min-w-0 items-center">
-          <BrandLogo
-            eager
-            className={cn(
-              "w-auto object-left transition-all duration-500",
-              scrolled ? "h-9 sm:h-10" : "h-10 sm:h-12",
-            )}
-          />
-        </a>
+    <>
+      {/* Government-style information strip */}
+      <div className="fixed inset-x-0 top-0 z-[60] border-b border-border bg-muted/95 backdrop-blur">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-2 text-[11px] sm:px-6 sm:text-xs">
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <span className="hidden sm:inline">
+              CivicX | Smart Civic Governance Platform
+            </span>
+            <span className="sm:hidden">CivicX</span>
+          </div>
 
-        <div className="hidden items-center gap-1 lg:flex">
-          {links.map((l) => {
-            const isActive = activeId === l.href;
-            return (
-              <a
-                key={l.label}
-                href={l.href}
-                className={cn(
-                  "relative rounded-lg px-3 py-2 text-sm transition-colors",
-                  isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground",
-                )}
-              >
-                {l.label}
-                {isActive && (
-                  <motion.span
-                    layoutId="nav-active"
-                    transition={{ type: "spring", stiffness: 340, damping: 30 }}
-                    className="absolute inset-x-2 -bottom-0.5 h-px"
-                    style={{
-                      backgroundImage: "var(--gradient-accent)",
-                      boxShadow: "0 0 10px var(--neon-cyan)",
-                    }}
-                  />
-                )}
-              </a>
-            );
-          })}
-          <LanguageToggle className="ml-2" />
-          <Link
-            to="/access"
-            className="ml-2 rounded-xl border border-cyan/35 bg-cyan/10 px-4 py-2 text-sm font-medium text-cyan transition-all duration-300 hover:bg-cyan/20 hover:shadow-[var(--shadow-glow-cyan)] active:scale-[0.97]"
-          >
-            Enter Platform
-          </Link>
-        </div>
-
-        <button
-          type="button"
-          onClick={() => setOpen((v) => !v)}
-          aria-label="Toggle navigation"
-          className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-border text-foreground lg:hidden"
-        >
-          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </button>
-
-        <AnimatePresence>
-          {open && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3 }}
-              className="col-span-2 overflow-hidden lg:hidden"
+          <div className="flex items-center gap-3">
+            <a
+              href="#services"
+              className="hidden transition-colors hover:text-foreground sm:inline"
             >
-              <div className="mt-2 flex flex-col gap-1 border-t border-border pt-3">
-                {links.map((l) => (
+              Citizen Services
+            </a>
+
+            <span className="hidden h-3 w-px bg-border sm:block" />
+
+            <LanguageToggle showIcon={false} />
+          </div>
+        </div>
+      </div>
+
+      {/* Main navigation */}
+      <header className="fixed inset-x-0 top-[33px] z-50 border-b border-border bg-background/95 shadow-sm backdrop-blur-md">
+        <nav className="mx-auto max-w-7xl px-4 sm:px-6">
+          <div className="flex h-[68px] items-center justify-between gap-5">
+            {/* Logo */}
+            <a
+              href="#top"
+              aria-label="CivicX home"
+              className="flex shrink-0 items-center"
+            >
+              <BrandLogo
+                eager
+                className="h-9 w-auto object-left sm:h-11"
+              />
+            </a>
+
+            {/* Desktop navigation */}
+            <div className="hidden items-center lg:flex">
+              {links.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  className="group relative px-4 py-6 text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+                >
+                  {link.label}
+
+                  <span className="absolute inset-x-4 bottom-0 h-0.5 origin-left scale-x-0 bg-primary transition-transform duration-200 group-hover:scale-x-100" />
+                </a>
+              ))}
+
+              {/* More menu */}
+              <button
+                type="button"
+                className="group flex items-center gap-1 px-4 py-6 text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+              >
+                More
+                <ChevronDown className="h-3.5 w-3.5 transition-transform group-hover:rotate-180" />
+              </button>
+
+              {/* Platform button */}
+              <Link
+                to="/access"
+                className="ml-3 inline-flex items-center rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition-all hover:opacity-90 active:scale-[0.98]"
+              >
+                Enter Platform
+              </Link>
+            </div>
+
+            {/* Mobile menu button */}
+            <button
+              type="button"
+              onClick={() => setOpen((value) => !value)}
+              aria-label={open ? "Close navigation" : "Open navigation"}
+              aria-expanded={open}
+              className="grid h-10 w-10 place-items-center rounded-md border border-border bg-background lg:hidden"
+            >
+              {open ? (
+                <X className="h-5 w-5" />
+              ) : (
+                <Menu className="h-5 w-5" />
+              )}
+            </button>
+          </div>
+
+          {/* Mobile navigation */}
+          {open && (
+            <div className="border-t border-border py-3 lg:hidden">
+              <div className="flex flex-col">
+                {links.map((link) => (
                   <a
-                    key={l.label}
-                    href={l.href}
+                    key={link.label}
+                    href={link.href}
                     onClick={() => setOpen(false)}
-                    className="rounded-lg px-3 py-2.5 text-sm text-muted-foreground hover:bg-secondary/60 hover:text-foreground"
+                    className="rounded-md px-3 py-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-primary"
                   >
-                    {l.label}
+                    {link.label}
                   </a>
                 ))}
-                <div className="flex items-center justify-between gap-2 px-3 py-2.5">
-                  <span className="text-sm text-muted-foreground">Language</span>
+
+                <div className="my-2 border-t border-border" />
+
+                <div className="flex items-center justify-between px-3 py-3">
+                  <span className="text-sm text-muted-foreground">
+                    Language
+                  </span>
+
                   <LanguageToggle showIcon={false} />
                 </div>
+
                 <Link
                   to="/access"
                   onClick={() => setOpen(false)}
-                  className="mt-1 rounded-xl border border-cyan/35 bg-cyan/10 px-3 py-2.5 text-center text-sm font-medium text-cyan"
+                  className="mt-1 rounded-md bg-primary px-4 py-3 text-center text-sm font-medium text-primary-foreground"
                 >
                   Enter Platform
                 </Link>
               </div>
-            </motion.div>
+            </div>
           )}
-        </AnimatePresence>
-      </motion.nav>
-    </header>
+        </nav>
+      </header>
+    </>
   );
 }
