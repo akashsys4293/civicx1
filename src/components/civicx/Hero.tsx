@@ -1,4 +1,4 @@
-```tsx
+
 import { motion, useReducedMotion } from "motion/react";
 import {
   ArrowRight,
@@ -293,4 +293,3 @@ export function Hero() {
     </section>
   );
 }
-```
